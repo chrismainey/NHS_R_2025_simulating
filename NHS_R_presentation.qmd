@@ -1,0 +1,280 @@
+---
+title: "Using simulation to evaluate a service"
+date: "2025-10-21"
+author: Chris Mainey
+Affiliation: "NHS Birmingham and Solihull ICB"
+email: "c.mainey1@nhs.net"
+date-format: "D MMMM YYYY"
+format:
+    revealjs:
+        transition: slide
+        theme: "./assets/styles.scss"
+        mainfont: "Open Sans"
+        toc: false
+        slide-number: true
+logo: "./assets/img/logo.png"
+include-in-header:
+    - text: |
+        <style>
+        .reveal .slide-logo {
+        max-height: unset;
+        height: 7vh;
+        }
+        </style>
+fig-align: 'center'
+fig-width: 7
+fig-height: 5
+execute:
+    echo: false
+cache: false             # Cache results
+warning: false           # Do not include warnings in rendered output
+error: false             # Do not include errors in the output
+feeze: auto              # Re-compute previously generated computational output only in case their source file changes
+crossref:
+    fig-title: '**Figure**'
+fig-labels: arabic
+brand: "./assets/_brand.yml"
+---
+
+```{r}
+#| label: load-libraries
+#| warning: false
+#| include: false
+#| output: false
+
+# Load the required library
+
+library(ggplot2)
+library(plotly)
+library(tidyverse)
+library(scales)
+library(DT)
+library(BSOLTheme)
+
+theme_set(
+    theme_bsol() +
+        theme(axis.text = element_text(size = unit(20, "pt")),
+              axis.title = element_text(size = unit(20, "pt")),
+              text = element_text(size = unit(20, "pt"))
+        )
+)
+
+```
+
+
+
+## Alternative title: {.center}
+
+__"...what to do when you've got no data, no clear questions, and no clue if the service is working..."__
+
+
+
+## What I'll cover: 
+
+A few general thoughts, and a worked example, including:
+
++ Problem structuring
++ What is the estimand?
++ Building a (simulation) model
+
+
+## Problem structuring
+
++ What real is the question?
+
++ Complex system, or more direct question?
+
++ What are the questions on the way to answering it?
+
++ What do we already know?
+
++ How could we answer it with a degree of confidence?
+
+## Visual methods
+
+:::: {.columns}
+
+::: {.column width="50%"}
+
++ Driver diagram
++ Causal loop diagram
++ Logic model
++ Influence diagram
++ Directed acyclic graph (DAG)
++ Big bit of paper
+:::
+
+::: {.column width="50%"}
+
+<br><br>
+![](./assets/img/dag_plot.png)
+
+:::
+
+::::
+
+## Example 
+
+:::{.center}
+![](./assets/img/Cholesterol_CLD.png)
+:::
+
+
+## What is the estimand?
+
+::: {.incremental}
++ "The thing we are estimating"
+
++ We are often supplied with a pre-determined estimated
+    + May have questionable link to the real question
+    
++ Can it be measured directly?
+
++ Are there confounders / biases to consider?
+
++ Do you need to make any adjustment (sets)?
+:::
+
+## Building a (simulation) model
+
+::: {.incremental}
++ Mathematical version of a real-world process
++ _"What would/could out system/question look like?"_
+
++ Understanding distributions / arrival rates / probabilities is key.
++ Use this knowledge to create synthetic data
++ Monte Carlo methods are useful:
+    + Repeatedly sample from distributions
+    + Average over many runs.
+:::
+
+## Ready to go?
+
+<div class="tenor-gif-embed" data-postid="7111727192603868283" data-share-method="host" data-aspect-ratio="1.76596" data-width="100%"><a href="https://tenor.com/view/bilmuri-thumbs-up-good-gif-7111727192603868283">Bilmuri Thumbs Up GIF</a>from <a href="https://tenor.com/search/bilmuri-gifs">Bilmuri GIFs</a></div> <script type="text/javascript" async src="https://tenor.com/embed.js"></script>
+
+
+## Real world application:
+
+Community Care Collaboratives - part of NHS plans to shift care out of hospitals
+
++ Costs and Benefits
++ No existing linked data - new service
++ Unclear definitions of who is eligible
++ No clear counter factual
+
+__System had already defined a benefit of 30,000 bed days saved per year__
+
+
+## So, is it working? 
+
+::: {.center}
+<div class="tenor-gif-embed" data-postid="18174494" data-share-method="host" data-aspect-ratio="1.21212" data-width="75%"><a href="https://tenor.com/view/i-dont-know-gif-18174494">I Dont Know GIF</a>from <a href="https://tenor.com/search/i+dont+know-gifs">I Dont Know GIFs</a></div> <script type="text/javascript" async src="https://tenor.com/embed.js"></script>
+:::
+
+
+## Problem structuring
+
+
+:::: {.columns}
+
+::: {.column width="50%"}
+
++ What currently happens?
++ What happens in an ideal world?
++ What data sources have we got?
+
+
+
+
+:::
+
+::: {.column width="50%"}
+
+![](./assets/img/diagram_CCC2.jpg)
+
+:::
+::::
+
+___Simulate previous fiscal year, to see if it is possible___
+
+## What is the estimand?
+
+<br>
+
+__Bed days saved!__
+
+<br>
+
+::: {.center}
+![](./assets/img/discharge_date_diagram.png)
+:::
+
+___We need to randomly assign new discharge dates___
+
+
+
+## So we need to estimate:
+
++ Saving on all eligible patients
++ Saving on a proportion of eligible patient
+
+```{r}
+#| eval: false
+#| include: true
+#| echo: true
+sim_fun <-
+    function(.data, fraction_effect = 1) {
+        new_dates <-  
+            as.Date(.data$earliest_discharge_date + 
+                        extraDistr::rdunif(nrow(.data),
+                                # Earliest discharge date (EDD)
+                               0,
+                                # No. days EDD actual discharge date
+                               .data$DischargeDate_range)) 
+  
+  fraction_effect * as.numeric(sum(.data$DischargeDate - new_dates))
+  }
+```
+
+## Findings:
+
++ ~50% of patients had zero-day LOS (no bed days to save)
++ If ___all___ patients made maximum saving: ~28,572 bd
++ Simulation on all patients: ~14,287 bd
++ Intervention rate is 2%: 286 bd
++ With 10-fold increase to 20%: ~2,857 bd
+
+
+
+__Even being generous, the proposed saving highly unlikley__
+
+## Implementation in Quarto
+
+:::: {.columns}
+
+::: {.column width="50%"}
+
++ Usual benefits of reproducibility and formats.
++ Layout is visually appealing.
++ Run the simulation dynamically on build.
++ In-line calculations in text.
+
+:::
+
+::: {.column width="50%"}
+
+<br><br>
+![](./assets/img/simulation_plot.png)
+
+:::
+
+::::
+
+
+## Final thoughts
+
++ Be clear on the questions you are trying to answer
++ Take time to draw it out and think about it
+
++ Not having data is not the end!
++ What would it look like, according to your best assumptions?

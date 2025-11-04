@@ -1,0 +1,124 @@
+/*-- scss:defaults --*/
+// Font family and colours
+$font-family-base: 'Open Sans', sans-serif;
+$text-color: #333;
+
+// Base font size assumption: 16px = 1rem
+$tag-font-size: 0.75rem;
+$title-bg-color:  #FFFFFF;
+
+
+// Fluid font sizes using clamp(min, preferred, max)
+$body-min: 0.8rem;       // ~16px
+$body-max: 1.05rem;    // ~20px
+
+$h1-min: 1.8rem;         // ~32px
+$h1-max: 2.8rem;         // ~48px
+
+$h2-min: 1.5rem;      // ~28px
+$h2-max: 2.2rem;       // ~40px
+
+$h3-min: 1.2rem;       // ~24px
+$h3-max: 1.6rem;         // ~32px
+
+$title-min: 3rem;
+$title-max: 5rem;    // ~56px
+
+$author-min: 1.8rem;  // ~20px
+$author-max: 2.5rem;     // ~32px
+
+
+// Fluid line-height ratios
+$line-height-body: 1.6;
+$line-height-heading: 1.2;
+
+// Spacing scale (responsive using rem)
+$space-xs: 0.5rem;
+$space-sm: 1rem;
+$space-md: 2rem;
+$space-lg: 3rem;
+
+
+/*-- scss:rules --*/
+
+
+body {
+  font-family: $font-family-base;
+  font-size: clamp($body-min, 1.5vw, $body-max);
+  line-height: $line-height-body;
+  color: $text-color;
+  margin: $space-md;
+  padding: $space-sm;
+
+
+  .MathJax_Display {
+    font-size: 100% !important;
+    color: $text-color;
+  }
+
+  // Headings with fluid font size and line-height
+h1 {
+    font-size: clamp($h1-min, 3.5vw, $h1-max);
+    line-height: $line-height-heading;
+    margin-bottom: $space-md;
+  }
+
+  h2 {
+    font-size: clamp($h2-min, 3vw, $h2-max);
+    line-height: $line-height-heading;
+    margin-bottom: $space-sm;
+  }
+
+  h3 {
+    font-size: clamp($h3-min, 2.5vw, $h3-max);
+    line-height: $line-height-heading;
+    margin-bottom: $space-xs;
+  }
+
+
+
+ .center {
+    h2 {
+      // Responsive title: scales between 1.5rem and 3rem
+      font-size: clamp($title-min, 3vw, $title-max);
+      text-align: left;
+      display: block;
+      margin-left: auto;
+      margin-right: auto;
+    }
+ }
+
+
+.center img {
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+
+
+  // Quarto title and author
+  .title {
+    font-size: clamp($title-min, 5vw, $title-max);
+    font-weight: bold;
+    line-height: $line-height-heading;
+    text-align: center;
+    background-color: $title-bg-color;
+    padding: 50px;
+    margin-bottom: $space-lg;
+  }
+
+  .quarto-title-author-name, .date {
+    font-size: clamp($author-min, 3vw, $author-max);
+    line-height: $line-height-heading;
+    text-align: center;
+    margin-bottom: $space-md;
+    margin-top: $space-xs;
+  }
+
+
+  .tag {
+    font-size: $tag-font-size;
+    margin-top: $space-xs;
+  }
+}
