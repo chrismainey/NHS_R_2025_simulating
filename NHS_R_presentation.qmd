@@ -78,7 +78,7 @@ A few general thoughts, and a worked example, including:
 + Building a (simulation) model
 
 
-## Problem structuring
+## Problem structuring {.incremental}
 
 + What real is the question?
 
