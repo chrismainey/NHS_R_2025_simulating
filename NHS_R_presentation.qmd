@@ -116,7 +116,7 @@ A few general thoughts, and a worked example, including:
 ## Example 
 
 :::{.center}
-![](./assets/img/Cholesterol_CLD.png)
+![](./assets/img/cholesterol_cld.png)
 :::
 
 
