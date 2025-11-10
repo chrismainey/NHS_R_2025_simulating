@@ -248,7 +248,7 @@ Chris Mainey
 <li>Big bit of paper</li>
 </ul>
 </div><div class="column" style="width:50%;">
-<p><br><br> <img data-src="./assets/img/dag_plot.png"></p>
+<p><br><br> <img data-src="./assets/img/dag_plot.png" style="width:100.0%"></p>
 </div></div>
 </section>
 <section id="example" class="slide level2">
@@ -261,9 +261,9 @@ Chris Mainey
 <h2>What is the estimand?</h2>
 <ul>
 <li class="fragment"><p>“The thing we are estimating”</p></li>
-<li class="fragment"><p>We are often supplied with a pre-determined estimated</p>
+<li class="fragment"><p>We are often supplied with a pre-determined estimand:</p>
 <ul>
-<li class="fragment">May have questionable link to the real question</li>
+<li class="fragment"><em>May have questionable link to the real question</em></li>
 </ul></li>
 <li class="fragment"><p>Can it be measured directly?</p></li>
 <li class="fragment"><p>Are there confounders / biases to consider?</p></li>
@@ -273,11 +273,13 @@ Chris Mainey
 <section id="building-a-simulation-model" class="slide level2">
 <h2>Building a (simulation) model</h2>
 <ul>
-<li class="fragment"><p>Mathematical version of a real-world process</p></li>
-<li class="fragment"><p><em>“What would/could out system/question look like?”</em></p></li>
-<li class="fragment"><p>Understanding distributions / arrival rates / probabilities is key.</p></li>
-<li class="fragment"><p>Use this knowledge to create synthetic data</p></li>
-<li class="fragment"><p>Monte Carlo methods are useful:</p>
+<li class="fragment">Mathematical version of a real-world process
+<ul>
+<li class="fragment"><em>“What would/could out system/question look like?”</em></li>
+</ul></li>
+<li class="fragment">Distributions / arrival rates / probabilities are key.</li>
+<li class="fragment">Use this knowledge to create synthetic data</li>
+<li class="fragment"><strong><em>Monte Carlo</em></strong> methods are useful:
 <ul>
 <li class="fragment">Repeatedly sample from distributions</li>
 <li class="fragment">Average over many runs.</li>
@@ -333,13 +335,67 @@ Chris Mainey
 <div class="center">
 <p><img data-src="./assets/img/discharge_date_diagram.png"></p>
 </div>
-<p><strong><em>We need to randomly assign new discharge dates</em></strong></p>
+<p><strong><em>We needed to randomly assign new discharge dates</em></strong></p>
+</section>
+<section id="how" class="slide level2">
+<h2>How?</h2>
+<div class="columns">
+<div class="column" style="width:50%;">
+<ul>
+<li>Might assume that we’d want a normal distribution of discharge dates</li>
+<li>You’d need to define a mid-point and a standard deviation</li>
+</ul>
+<p><strong>Red Herring!:</strong> This will give little to no variation.</p>
+</div><div class="column" style="width:50%;">
+<p><br></p>
+<div class="cell">
+<div class="cell-output-display">
+<div>
+<figure>
+<p><img data-src="NHS_R_presentation_files/figure-revealjs/normal-1.png" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+</div></div>
+</section>
+<section id="how-2" class="slide level2">
+<h2>How (2)</h2>
+<p><br></p>
+<div class="center">
+<p><img data-src="./assets/img/random_date.png" style="width:85.0%"></p>
+</div>
+</section>
+<section id="how-3" class="slide level2">
+<h2>How (3)</h2>
+<div class="columns">
+<div class="column" style="width:50%;">
+<ul>
+<li><p>Set EDD as 0</p></li>
+<li><p>Count days to DD as MAX</p></li>
+<li><p>Random value 0 - MAX</p></li>
+<li><p>Need to have equal probability of any day</p></li>
+<li><p>Monte Carlo method</p></li>
+<li><p>‘discrete uniform’ distribution</p></li>
+</ul>
+</div><div class="column" style="width:50%;">
+<p><br></p>
+<div class="cell">
+<div class="cell-output-display">
+<div>
+<figure>
+<p><img data-src="NHS_R_presentation_files/figure-revealjs/dunif-1.png" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+</div></div>
 </section>
 <section id="so-we-need-to-estimate" class="slide level2">
 <h2>So we need to estimate:</h2>
 <ul>
 <li>Saving on all eligible patients</li>
-<li>Saving on a proportion of eligible patient</li>
+<li>Saving on a proportion of eligible patients</li>
 </ul>
 <div class="cell">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb1"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href=""></a>sim_fun <span class="ot">&lt;-</span></span>
@@ -348,24 +404,24 @@ Chris Mainey
 <span id="cb1-4"><a href=""></a>            <span class="fu">as.Date</span>(.data<span class="sc">$</span>earliest_discharge_date <span class="sc">+</span> </span>
 <span id="cb1-5"><a href=""></a>                        extraDistr<span class="sc">::</span><span class="fu">rdunif</span>(<span class="fu">nrow</span>(.data),</span>
 <span id="cb1-6"><a href=""></a>                                <span class="co"># Earliest discharge date (EDD)</span></span>
-<span id="cb1-7"><a href=""></a>                               <span class="dv">0</span>,</span>
+<span id="cb1-7"><a href=""></a>                                <span class="at">min =</span> <span class="dv">0</span>,</span>
 <span id="cb1-8"><a href=""></a>                                <span class="co"># No. days EDD actual discharge date</span></span>
-<span id="cb1-9"><a href=""></a>                               .data<span class="sc">$</span>DischargeDate_range)) </span>
+<span id="cb1-9"><a href=""></a>                               <span class="at">max =</span> .data<span class="sc">$</span>DischargeDate_range)) </span>
 <span id="cb1-10"><a href=""></a>  </span>
 <span id="cb1-11"><a href=""></a>  fraction_effect <span class="sc">*</span> <span class="fu">as.numeric</span>(<span class="fu">sum</span>(.data<span class="sc">$</span>DischargeDate <span class="sc">-</span> new_dates))</span>
 <span id="cb1-12"><a href=""></a>  }</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 </section>
-<section id="findings" class="slide level2">
+<section id="findings" class="slide level2 incremental">
 <h2>Findings:</h2>
 <ul>
-<li>~50% of patients had zero-day LOS (no bed days to save)</li>
-<li>If <strong><em>all</em></strong> patients made maximum saving: ~28,572 bd</li>
-<li>Simulation on all patients: ~14,287 bd</li>
-<li>Intervention rate is 2%: 286 bd</li>
-<li>With 10-fold increase to 20%: ~2,857 bd</li>
+<li>~50% of patients zero-day LOS (nothing to save)</li>
+<li>If <strong><em>all</em></strong> patients made maximum saving: <strong>~28,572 bd</strong></li>
+<li>Simulation on all patients: <strong>~14,287 bd</strong></li>
+<li>Intervention rate is 2%: <strong>286 bd</strong></li>
+<li>With 10-fold increase to 20%: <strong>~2,857 bd</strong></li>
 </ul>
-<p><strong>Even being generous, the proposed saving highly unlikley</strong></p>
+<p><strong>Even being generous, 30,000 is unlikely</strong></p>
 </section>
 <section id="implementation-in-quarto" class="slide level2">
 <h2>Implementation in Quarto</h2>
