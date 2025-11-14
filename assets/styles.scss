@@ -122,9 +122,13 @@ h1 {
     margin-top: $space-xs;
   }
 
-
   .tag {
     font-size: $tag-font-size;
     margin-top: $space-xs;
   }
 }
+
+.reveal .progress span {
+  background-color: "#005EB8";
+}
+

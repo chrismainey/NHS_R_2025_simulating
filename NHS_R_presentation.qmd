@@ -64,12 +64,16 @@ theme_set(
 ```
 
 
-
 ## Alternative title: {.center}
 
 __"...what to do when you've got no data, no clear questions, and no clue if the service is working..."__
 
 
+## Wait, what?
+
+::: {.center}
+<iframe src="https://giphy.com/embed/BmmfETghGOPrW" width="800" height="600" style="" frameBorder="0" class="giphy-embed" allowFullScreen></iframe><p><a href="https://giphy.com/gifs/reaction-BmmfETghGOPrW">via GIPHY</a></p>
+:::
 
 ## What I'll cover: 
 
@@ -153,7 +157,9 @@ A few general thoughts, and a worked example, including:
 
 ## Ready to go?
 
+::: {.center}
 <div class="tenor-gif-embed" data-postid="7111727192603868283" data-share-method="host" data-aspect-ratio="1.76596" data-width="100%"><a href="https://tenor.com/view/bilmuri-thumbs-up-good-gif-7111727192603868283">Bilmuri Thumbs Up GIF</a>from <a href="https://tenor.com/search/bilmuri-gifs">Bilmuri GIFs</a></div> <script type="text/javascript" async src="https://tenor.com/embed.js"></script>
+:::
 
 
 ## Real world application:
@@ -163,7 +169,7 @@ Community Care Collaboratives - part of NHS plans to shift care out of hospitals
 + Costs and Benefits
 + No existing linked data - new service
 + Unclear definitions of who is eligible
-+ No clear counter factual
++ No clear reference / counter factual
 
 __System had already defined a benefit of 30,000 bed days saved per year__
 
@@ -306,7 +312,7 @@ dt_dunif |>
     expand = c(0, 0)
   ) +
   scale_y_continuous("Density")+
-  theme_minimal() +
+  theme_minimal(base_size = 32) +
   theme(#axis.title.y = element_blank(),
         axis.title.x = element_blank(),
         text = element_text(size = unit(20, "pt"))
